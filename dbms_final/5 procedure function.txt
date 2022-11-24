@@ -1,0 +1,42 @@
+create table Stud_marks(name varchar(20),total_marks int);
+create table Results(rollno int,name varchar(20),Class varchar(20));
+
+delimiter //
+create procedure p1(in roll tinyint,in name varchar(20),in marks int)
+begin
+declare
+class varchar(20);
+if marks<=1500 and marks>=990 then set class='distinction';
+elseif marks<=989 and marks>=900 then set class='first class';
+elseif marks<=899 and marks>=825 then set class='second class';
+elseif marks<=824 and marks>=700 then set class='pass';
+else set class='fail';
+end if;
+insert into Stud_marks values(name, marks);
+insert into Results values(roll,name,class);
+end//
+
+call p1(1,'vaishnavi',1499);
+call p1(2,'harsha',1455);
+call p1(3,'riya',800);
+call p1(4,'rohit',920);
+call p1(5,'arpita',50);
+
+select * from Stud_marks;
+select * from Results;
+
+delimiter //
+create function  f1(classname varchar(20)) returns int
+DETERMINISTIC
+begin
+declare
+total int;
+select distinct count(*) into total from Results where Class=classname;
+return total;
+end//
+
+select f1('distinction');
+select f1('first class');
+select f1('second class');
+select f1('pass');
+select f1('fail');

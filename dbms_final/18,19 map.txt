@@ -1,0 +1,25 @@
+use vaishnavi
+
+db.createCollection("orders")
+
+db.orders.insert({cust_id:1,order_date:'2022-01-01',status:'D',price:200,items:'rice',quantity:2});
+db.orders.insert({cust_id:2,order_date:'2022-09-19',status:'P',price:100,items:'Wheat',quantity:4});
+db.orders.insert({cust_id:3,order_date:'2021-04-29',status:'D',price:400,items:'Penut',quantity:5});
+db.orders.insert({cust_id:3,order_date:'2022-03-10',status:'P',price:240,items:'Sugar',quantity:6});
+db.orders.find().pretty();
+
+var map=function(){emit(this.cust_id,this.price);} 
+var red=function(keys,values){return Array.sum(values);} 
+db.orders.mapReduce(map,red,{'out':'neworders'}) 
+db.neworders.find().pretty() 
+
+db.orders.mapReduce(map,red,{'query':{status:'D'},'out':'new1'})
+db.new1.find().pretty()
+
+db.orders.mapReduce(map,red,{'query':{status:'P'},'out':'new2'})
+db.new2.find().pretty()
+
+var map1=function(){for(var k in this){emit(k,{count:1});}};
+var red1=function(keys,cnt){total=0; for(var i in cnt){total+=cnt[i].count}return{"CountOfKey":total}};
+db.orders.mapReduce(map1,red1,{'out':'new3'})
+db.new3.find().pretty()

@@ -1,0 +1,542 @@
+1--------------------------------------------------------------------------
+1. Create table and show all table
+
+2. Add the primary key in department table.
+> alter table department add constraint primary key(dept_no);
+
+3. Add the foreign key in instructor table.
+>>alter table instructor add foreign key(dept_no) references department(dept_no);
+
+4. Modify the table department by adding a column budget.
+>>alter table department add column budget int(10);
+
+5. Create unique index on mobile number of instructor table.
+>>create unique index index_name on instructor(mob_no);
+
+6. Create a view of instructor relation except the salary field.
+>>create view ins_view as select ins_id , ins_name , dept_no , mob_no from instructor;
+
+7. Remove the Budget from department table.
+>>alter table department drop budget;
+
+8. Increase the size of the title field of course relation.
+>>alter table course change column title title varchar(55);
+
+9. create a sequence (or use the AUTO_INCREMENT attribute) on course_id
+starting with 51
+>>
+10. Delete all records with truncate command.
+>> truncate table depatment;
+11. Delete Course table
+>> drop table course;
+
+2----------------------------------------------------
+Queries :
+1. Create database and show all databases
+2. Create table and show all table
+
+3. Add the primary key in Instructor table
+>>alter table instructor add constraint primary key(ins_id);
+
+4. Add the foreign key in teaches table
+>>alter table instructor add foreign key(teacher_id) references instructor(ins_id);
+
+5. create a sequence (or use the AUTO_INCREMENT attribute) on course_id
+starting with 101
+>>pahilech auto increment kara table banavtana 
+ani alter table courses AUTO_INCREMENT=101; **NOT CHECKED*
+
+6. Create unique index on mobile number of instructor table
+>> create unique index index_name on instructor(mob_no);
+
+7. Create a view by showing a instructor name and title of course they teaches
+>>  **NOT FOUND**
+
+8. Remove the credits from department table.
+>> alter table department drop credits;
+
+9. Delete the last view.
+>> drop view ins_view;
+
+10. Delete teaches table
+>> drop table teaches;
+
+
+3------------------doc pat treats-----------
+Queries
+1. Insert 5 records in each table
+2. List doc_name, pat_name and their cities name if they live in same city.
+>> **NOT FOUND**
+3. Display the list of doctors who are MD;
+>> select name from doctor wher qualification="MD";
+
+4. Display the patient name and the doctor name who is treating the cancer
+patient
+>> select name, doctor_nmae from patient as p, doctor as d, treats as t there t.disease="Cancer" and d.doctorid=t.doctor_id
+and p.patient_id=t.patient_id;
+
+5. Change the qualification of doctor Shubham from mbbs to md;
+>> update doctor set qualification="MD" where doctor_name="shubham";
+
+6. Display the patient name, whose name starts with letter A, End with A,
+having the exacts 5 letters
+>> select patient_name from patient where patient_name LIKE "a___a";
+
+7. List the cities in which either doctors or patient lives;
+>> select city from doctor union select city from patient;
+
+8. Find the avg salary of docs in dentist dept;
+>> select avg(salary) from doctor where dept=Dentist;
+
+9. Give five percent salary raise to the dentist 5% and 10% to cardiologists in
+single query;
+>>update doctor
+set salary= case when dept="Dentist" then salary(salary*0.05)
+when dept="Cardiologst" then salary(salary*0.1)
+
+10. Display patient name which does not have email id.
+>> select patient_name from patient where email is NULL;
+
+11. Find average salary of each department.
+selet dept, avg(salary) from doctor group by dept;
+
+12. Find the dept where avg salary of the doctor is more than 50,000;
+>>select dept form doctor group by dept having avg(salary)>50000;
+
+13. Remove all the records of patients with Pat_id =p10;
+>> delete from patient where pat_id=10;
+
+
+
+=================================================
+7-----------------------------mandatory exception----------------------
+create table borrower (roll_no int, name varchar(20), dateOfIssue date, nameOfBook varchar(20), status char);
+
+create table fine (roll_no int, dateR date, amt int);
+
+insert into borrower values (1, 'abc', '31-OCT-2022', 'book1', 'I');
+insert into borrower values (2, 'def', '23-OCT-2022', 'book2', 'I');
+insert into borrower values (3, 'GHI', '11-SEP-2022', 'book3', 'I');
+
+declare
+in_roll_no int;
+in_nameOfBook varchar(20);
+date_of_i date;
+no_of_days int;
+fine_calc int;
+begin
+in_roll_no := 1;
+in_nameOfBook := 'book1';
+select dateOfIssue into date_of_i from borrower where roll_no=in_roll_no and nameOfBook=in_nameOfBook;
+select current_date - date_of_i into no_of_days from dual;
+if no_of_days>=15 and no_of_days<=30 then
+fine_calc := 5 * no_of_days;
+elsif no_of_days>30 then
+fine_calc := 50 * no_of_days;
+end if;
+insert into fine values(in_roll_no, current_date, fine_calc);
+update borrower set status='R' where roll_no=in_roll_no;
+exception
+when no_data_found then
+dbms_output.put_line('borrower does not exist');
+end;
+=================================================
+8--------------------------------------stored procedure- 8 and 9 is same-----------
+
+
+delimiter |
+create procedure proc_grade(
+	in name varchar(20),in roll int,in marks int)
+	begin
+	declare class varchar(20);
+	if marks <=1500 and marks >= 990 then set class = "Distinction";
+	elseif marks <= 989 and marks >= 900 then set class ="First Class";
+	elseif marks <=899 and marks >=825 then set class = "Second class";
+	elseif marks <=824 and marks >=700 then set class = "Pass";
+	else set class ="Fail";end if;insert into studmarks values(name,marks,roll);
+	insert into result values(roll,name,class);
+	end |
+
+call procedure//
+
+
+MariaDB [a8]> call proc_grade("Aryan",1,850);
+Query OK, 2 rows affected (0.006 sec)
+
+MariaDB [a8]> call proc_grade("Smith",3,834);
+Query OK, 2 rows affected (0.022 sec)
+
+MariaDB [a8]> call proc_grade("Smith",3,834);
+Query OK, 2 rows affected (0.022 sec)
+
+MariaDB [a8]> call proc_grade("Carol",4,750);
+Query OK, 2 rows affected (0.008 sec)
+
+MariaDB [a8]> call proc_grade("Bob",5,950);
+Query OK, 2 rows affected (0.005 sec)
+
+MariaDB [a8]> call proc_grade("Sam",6,650);
+Query OK, 2 rows affected (0.007 sec)
+
+MariaDB [a8]> select * from studmarks;
++-------+-------+------+
+| name  | marks | roll |
++-------+-------+------+
+| Aryan |   850 |    1 |
+| Peter |  1000 |    2 |
+| Smith |   834 |    3 |
+| Carol |   750 |    4 |
+| Bob   |   950 |    5 |
+| Sam   |   650 |    6 |
++-------+-------+------+
+6 rows in set (0.001 sec)
+
+
+MariaDB [a8]> select * from result;
++------+-------+--------------+
+| roll | name  | class        |
++------+-------+--------------+
+|    1 | Aryan | Second class |
+|    2 | Peter | Distinction  |
+|    3 | Smith | Second class |
+|    4 | Carol | Pass         |
+|    5 | Bob   | First Class  |
+|    6 | Sam   | Fail         |
++------+-------+--------------+
+6 rows in set (0.001 sec)
+
+
+MariaDB [a8]> delimiter |
+	create function totstud2(classname varchar(20)) returns int begin declare tot int;
+	select distinct count(*) into tot from result where class = classname;
+	return tot;
+	end |
+Query OK, 0 rows affected (0.007 sec)
+
+MariaDB [a8]> select totstud2("Pass");|
++------------------+
+| totstud2("Pass") |
++------------------+
+|                1 |
++------------------+
+1 row in set (0.001 sec)
+MariaDB [a8]> select totstud2("Fail");|
++------------------+
+| totstud2("Fail") |
++------------------+
+|                1 |
++------------------+
+1 row in set (0.001 sec)
+
+======================================================
+
+10---and 11--------triggers----------
+1.Create a trigger to keep the track of records that are updated or deleted from the 
+library table .The old values of updated or deleted record should be added in 
+library audit table along with the date of modification ,type of operation and the 
+user who performed the modification.
+delimiter @
+create trigger after_update AFTER UPDATE
+on library FOR EACH ROW
+BEGIN
+INSERT INTO library_audit values(old.b_id,old.title,old.edition,old.no_of_copies,current_date(),"Updation",user());
+END
+@
+
+delimiter @
+create trigger after_delete AFTER DELETE
+on library FOR EACH ROW
+BEGIN
+INSERT INTO library_audit values(old.b_id,old.title,old.edition,old.no_of_copies,current_date(),"Deletion",user());
+END @
+
+2.To create a trigger to check the number of copies available before issuing a book 
+if number of copies issuing > the number of books available then issue the number 
+of books which are available.
+create trigger before_insert BEFORE INSERT
+on transaction for each row
+BEGIN
+declare copies_available int;
+if new.issue_or_return="I" then
+select no_of_copies into copies_available from library where library.b_id=new.book_id;
+if new.no_of_copies_issued_or_returned>copies_available then
+set new.no_of_copies_issued_or_returned = copies_avilable;
+end if;
+end if;
+END
+#
+-----------------------------------------------------------------------------------------------------------
+11--------------------11.1:
+
+delimiter @
+create trigger after_update AFTER UPDATE
+on library FOR EACH ROW
+BEGIN
+INSERT INTO library_audit values(old.b_id,old.title,old.edition,old.no_of_copies,current_date(),"Updation",user());
+END
+@
+--------------------------------------------------------------
+delimiter @
+create trigger after_delete AFTER DELETE
+on library FOR EACH ROW
+BEGIN
+INSERT INTO library_audit values(old.b_id,old.title,old.edition,old.no_of_copies,current_date(),"Deletion",user());
+END @
+
+11.2.To update the number of copies available after the book is issued or returned.
+create trigger after_issue_return After Insert
+on transaction for each row
+BEGIN
+declare copies_available int;
+select no_of_copies into copies_available from library where library.b_id=new.book_id;
+if new.issue_or_return="I" then
+set copies_available=copies_available-new.no_of_copies_issued_or_returned;
+elseif new.issue_or_return = "R" then
+set copies_available=copies_available+new.no_of_copies_issued_or_returned;
+end if;
+update library
+set no_of_copies=copies_available where library.b_id=new.book_id;
+end
+@
+
+12-----------------------12.1-----------------------------------
+create  table student (roll_no int, name varchar(20), marks int);
+insert into student values(1, 'abc', 34);
+insert into student values(2, 'def', 36);
+insert into student values(3, 'ghi', 35);
+declare
+updated_no int;
+begin
+update student
+set marks = 40
+where marks >=35 and marks <=39;
+if sql%notfound then
+dbms_output.put_line('No updations');
+elsif sql%found then
+updated_no := sql%rowcount;
+dbms_output.put_line(updated_no || ' updations');
+end if;
+end;
+/
+--------------------------12.2--------------------------------------------
+Create table student2 (roll_no int, name varchar(20), marks int);
+declare
+cursor c_copier(min_marks int)
+is select * from student
+where marks >= min_marks;
+r_student c_copier%rowtype;
+r_no int;
+begin
+open c_copier(35);
+loop
+fetch c_copier into r_student;
+exit when c_copier%notfound;
+begin
+select roll_no into r_no
+from student2 where roll_no=r_student.roll_no;
+exception
+when no_data_found then
+insert into student2 values(r_student.roll_no, r_student.name, r_student.marks);
+end;
+end loop;
+close c_copier;
+end;
+/
+
+
+
+------------------------------------
+13 : mysql connectivity
+---------------------------------------
+import mysql.connector
+
+con = mysql.connector.connect(
+    user='root',
+    password='root123',
+    host='127.0.0.1',
+    database='demo2')
+
+def insert(name, salary, city):
+    res = con.cursor()
+    sql = "insert into demo (name,salary,city) values (%s,%s,%s)"
+    user = (name, salary, city)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Insert Success")
+
+def update(name, salary, city):
+    res = con.cursor()
+    sql = "update demo set name=%s where salary=%s and city=%s"
+    user = (name, salary, city)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Update Success")
+
+def select():
+    res = con.cursor()
+    sql = "SELECT NAME,salary,CITY from demo"
+    res.execute(sql)
+    print(res.fetchall())
+
+def delete(name):
+    res = con.cursor()
+    sql = "delete from demo where name=%s"
+    user = (name,)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Delete Success")
+
+while True:
+    print("1.Insert Data")
+    print("2.Update Data")
+    print("3.Select Data")
+    print("4.Delete Data")
+    print("5.Exit")
+    choice = int(input("Enter Your Choice : "))
+    if choice == 1:
+
+        name = input("Enter Name : ")
+        salary = input("Enter Salary : ")
+        city = input("Enter City : ")
+        insert(name, salary, city)
+    elif choice == 2:
+        name = input("Enter Name : ")
+        salary = input("Enter salary : ")
+        city = input("Enter City : ")
+        update(name, salary, city)
+    elif choice == 3:
+        select()
+    elif choice == 4:
+        name = input("Enter The Name to Delete : ")
+        delete(name)
+    elif choice == 5:
+        quit()
+    else:
+        print("Invalid Selection . Please Try Again !")
+-----------------------------------------------------------------------------------------------------------
+14 and 15 is same : Mongo CRUD
+-----------------------------------------------------------------------------------------------------------
+
+1-> display 1st doc:
+db.articles.findOne()
+
+2->display 1st belonging to sharma
+db.articles.findOne({author:"Sharma"})
+
+3-> change  to info tech
+db.articles.updateMany({category:"IT"},{$set:{category:"Information Technology"}})
+
+4_> modify comment made by certain person on certain article
+db.articles.updateOne({title:"C"},{$set:{comment:[{name:"LALA",remarks:"HUGE"}]}})
+
+5-> add one more comment for particular title
+db.articles.updateOne({title:"C"},{$push:{comment:[{name:"MAMA",remarks:"POPO"}]}})
+
+6_. Delete all documents whose author age is less than 18
+db.articles.deleteMany({author_age:{$lt:18}})
+
+7->remove all documents from  a collection
+ db.articles.delete({})
+
+8_>delete the article collection  ->
+ db.articles.drop()
+
+9- display documents whose title is java ->              db.articles.find({title:"Java"})
+
+
+16th---------------------mongo indexing ,aggregate--------------------- 
+1->Create a simple index on cust_id and also create a simple index on Item_name. Try
+to make a duplicate entry.
+db.orders.createIndex({cust_id:1})
+'cust_id_1'
+db.orders.createIndex({item_name:1})
+'item_name_1'
+db.orders.getIndexes()
+------------------------------------------------------
+2_>
+Create a multikey index on phone_no and find the customers with 2 phone nos. 
+db.orders.createIndex({phone_no:1}) 
+'phone_no_1'
+db.orders.find({phone_no:{$size:2}}).pretty() 
+----------------------------------------------
+3_> display all indexes created till now    
+ db.orders.getIndexes()
+
+4-> 	find total no of orders received    
+  db.orders.count()
+
+5-> 	how many orders are pending.  
+     db .orders.find({Status:'P'}).count() 
+
+6->    Show how many orders are placed by each customer.
+db.orders.aggregate({$group:{_id:"$cust_name",cnt_of_order:{$sum:1}}}) 
+
+7->  Display all customer ids in ascending order with total order amount which have
+been is delivered. 
+db.orders.aggregate({$match:{status:'D'}},{$group:{_id:"$cust_id",tot_amt:{$sum: "$amount"}}},{$sort:{_id:1}})
+
+
+8->Show top three Selling Items from orders collection
+db.orders.aggregate({$group:{_id:"$item_name",totqty:{$sum:"$quantity"}}}, {$sort:{totqty:-1}},{$limit:3}) 
+
+9-> which customer has placed max orders:
+db.orders.aggregate({$group:{_id:"$cust_name",cnt_orderid:{$sum:1}}},{$sort:{cnt_orderid:-1}},{$limit:1})
+
+--------------------------------------------------------------------------------
+17---------------------mongo indexing ,aggregate---------------------
+
+1->Create unique index on the order_id key and try to make duplicate entry.
+  db.orders.createIndex({Order_id:1}, {unique:true})
+
+2-> Create a sparse index on email_id key and show the effects with and without
+indexing. (Hint:use find() before and after aplying index. Also use .explain())
+ db.orders.find({Email_id:"aryan@gmail.com"}).explain()
+ db.orders.createIndex({Email_id:1},{sparse:true})
+ db.orders.find({Email_id:"aryan@gmail.com"}).explain() 
+
+3-> total index file size
+db.orders.totalIndexSize()
+
+4->Delete all indexes.
+ db.orders.dropIndexes() 
+
+5->Find Total no of orders received so far
+db.orders.find({Status:'D'}).count()
+
+6->Show how many orders are placed by each customer.
+db.orders.aggregate({$group:{_id:"$Cust_name",cnt_of_order:{$sum:1}}}) 
+
+7-> Display all customer names of orders collection with no repetition 
+db.orders.distinct("cust_name") 
+
+8->Display all customer ids and their total pending order amount in descending order.
+db.orders.aggregate({$match:{Status:'P'}}, {$group:{_id:"$Cust_id",pend_amt: {$sum:"$Amt"}}},{$sort:{pend_amt:-1}})
+
+9->Find the date on which maximum orders are received.
+db.orders.aggregate({$group:{_id:"$DtOfOrder",cnt_of_order:{$sum:1}}},{$sort:
+{cnt_of_order:-1}},{$limit:1}) 
+
+10->Show top three Selling Items from orders collection.
+db.orders.aggregate({$group:{_id:"$Item_name",totqty:{$sum:"$Qty"}}}, {$sort:
+{totqty:-1}},{$limit:3}) 
+
+----------------------------------------------------------18 and 19 same//////////////////////////////////////
+1. Display total price per customer.
+var map=function(){emit(this.Cust_id,this.Amt);} 
+ var red=function(keys,values){return Array.sum(values);} 
+db.orders.mapReduce(map,red,{'out':'neworders'}) 
+db.neworders.find().pretty() 
+
+2. Display total price per customer having status= D
+db.orders.mapReduce(map,red,{'query':{Status:'D'},'out':'new1'}) 
+db.new1.find().pretty()  
+
+3. Display total price for Status =P
+db.orders.mapReduce(map,red,{'query':{Status:'P'},'out':'new2'}) 
+db.new2.find().pretty()  
+
+4. Finding count of all keys in orders collection
+var map1=function(){for(var k in this){emit(k,{count:1});}};
+var red1=function(eys,cnt){total=0; for(var i in cnt){total+=cnt[i].count}return{"CountOfKey":total}};
+db.orders.mapReduce(map1,red1,{'out':'new3'})
+

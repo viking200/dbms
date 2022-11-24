@@ -1,0 +1,60 @@
+create table Borrower3(roll_in int,name varchar(15),date_of_issue date,name_of_book varchar(15),status varchar(15));
+create table Fine3(roll_in int,fine_date date,amount int);
+
+insert into Borrower3 values(1,'Priya',str_to_date('2022-10-01','YYYY-MM-DD'), 'TOC', 'i');
+insert into Borrower3 values(2,'Harsha',str_to_date('2022-09-01','YYYY-MM-DD'), 'DBMS', 'i');
+insert into Borrower3 values(3,'Vaishnavi',str_to_date('2022-11-01','YYYY-MM-DD'), 'SE', 'i');
+insert into Borrower3 values(4,'Purva',str_to_date('2022-09-11','YYYY-MM-DD'), 'SPOS', 'i');
+insert into Borrower3 values(5,'Vidya',str_to_date('2022-11-11','YYYY-MM-DD'), 'CNS', 'i');
+
+
+insert into Borrower3 values(1,'Priya',str_to_date('2022-10-01','%Y-%m-%d'), 'TOC', 'i');
+insert into Borrower3 values(2,'Harsha',str_to_date('2022-09-01','%Y-%m-%d'), 'DBMS', 'i');
+insert into Borrower3 values(3,'Vaishnavi',str_to_date('2022-11-01','%Y-%m-%d'), 'SE', 'i');
+insert into Borrower3 values(4,'Purva',str_to_date('2022-09-11','%Y-%m-%d'), 'SPOS', 'i');
+insert into Borrower3 values(5,'Vidya',str_to_date('2022-11-11','%Y-%m-%d'), 'CNS', 'i');
+
+select * from Borrower3;
+
+declare
+roll int:= 1;
+b_name varchar(20):='TOC';
+date_issue date;
+no_days int:=0;
+amount int:=0;
+no_days_to_be_fined int:=0;
+ex_valid_roll exception;
+
+begin
+if roll<0 then raise ex_valid_roll;
+end if;
+select date_of_issue into date_issue from Borrower3 where roll_in=roll and name_of_book=b_name;
+no_days:=sysdate-date_issue;
+if(no_days>15 and no_days<30)then
+no_days_to_be_fined:=no_days-15;
+amount:=no_days_to_be_fined*5;
+elsif(no_days>30)then
+no_days_to_be_fined:=no_days-15;
+amount:=15*5 + (no_days_to_be_fined-15)*50;
+else
+amount:=0;
+end if;
+insert into Fine3 values(roll,sysdate,amount);
+update Borrower3 set status='r' where roll_in=roll and name_of_book=b_name;
+
+exception
+when ex_valid_roll then
+dbms_output.put_line('Roll no is not valid');
+when no_data_found then
+dbms_output.put_line('data not found');
+
+when others then
+dbms_output.put_line('other error ');
+
+
+end;
+/
+
+select * from Borrower3;
+select * from Fine3;
+

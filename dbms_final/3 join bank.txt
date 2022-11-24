@@ -1,0 +1,97 @@
+create table branch_master(branch_id int(10) primary key,bname varchar(10));
+create table employee_master(emp_id int(10) primary key,e_name varchar(10),branch_id int(10),salary int(10), dept varchar(10),manager_id int(10),foreign key(branch_id) references branch_master(branch_id),foreign key(manager_id) references branch_master(branch_id) on delete set null);
+create table contact_details(emp_id int(10),email_id varchar(20),phone_no int(10), foreign key(emp_id) references employee_master(emp_id) on delete set null);
+create table emp_address_details(emp_id int(10),street varchar(20),city varchar(20),state varchar(20),foreign key(emp_id) references employee_master(emp_id) on delete cascade);
+create table branch_address(branch_id int(10),city varchar(20),state varchar(20),foreign key(branch_id) references branch_master(branch_id));
+
+desc branch_master;
+insert into branch_master values(1,'vadgaon');
+insert into branch_master values(2,'pune');
+insert into branch_master values(3,'panvel');
+insert into branch_master values(4,'pimpri');
+insert into branch_master values(5,'ambegaon');
+select * from branch_master;
+
+desc employee_master;
+insert into employee_master values(10,'aryan',1,40000,'manager',null);
+insert into employee_master values(11,'kiran',4,5000,'admin',1);
+insert into employee_master values(12,'carol',2,6000,'assistant',1);
+insert into employee_master values(13,'peter',3,1200,'senior',1);
+insert into employee_master values(14,'bob',5,11000,'hr',1);
+select * from employee_master;
+
+desc contact_details;
+insert into contact_details values(11,'kiran@gmail.com',890154761);
+insert into contact_details values(10,'aryan@gmail.com',876543210);
+insert into contact_details values(13,'peter@gmail.com',765432189);
+select * from contact_details;
+
+desc emp_address_details;
+insert into emp_address_details values(10,'vadgaon','Pune','Maharashtra'); 
+insert into emp_address_details values(11,'Link Road','Mumbai','Maharashtra'); 
+insert into emp_address_details values(12,'Park stree','Kolkata','West Bengal'); 
+insert into emp_address_details values(13,'Roha','Bangalore','Karnataka');
+insert into emp_address_details values(14,'Street roa','Cuttack','Orissa');
+select * from emp_address_details;
+
+desc branch_address;
+insert into branch_address values(1,'Pune','Maharashtra'); 
+insert into branch_address values(2,'Kolkata','West Bengal'); 
+insert into branch_address values(3,'Mumbai','Maharashtra'); 
+insert into branch_address values(4,'Bangalore','Karnataka');  
+insert into branch_address values(5,'Cuttack','Orissa');
+select * from branch_address;
+
+select emp_id,e_name,bname from employee_master as e inner join branch_master b on e.branch_id=b.branch_id order by emp_id;
+
+select e_name,bname,dept from branch_master as b,employee_master as e  where e.branch_id=b.branch_id and dept = 'admin';
+
+select e_name,phone_no,city from employee_master e inner join emp_address_details a on e.emp_id=a.emp_id inner join contact_details c on e.emp_id=c.emp_id;
+
+select e_name,email_id,phone_no from employee_master e join contact_details c on e.emp_id=c.emp_id;
+
+delete from employee_master where emp_id=12; 
+delete from employee_master where emp_id=13; 
+select * from employee_master;
+select e_name,email_id,phone_no from employee_master e right join contact_details c on 
+e.emp_id=c.emp_id;
+
+/* select e1.e_name,e2.e_name as manager from employee_master e1,employee_master e2 where e1.manager_id=e2.emp_id; */
+
+select e_name,dept,bname,salary from branch_master b natural join employee_master e;
+
+select e.emp_id,e_name,city from employee_master e,branch_master b,emp_address_details a 
+where b.bname="Vadgaon" and b.branch_id=e.branch_id and e.emp_id=a.emp_id; 
+
+select e_name,street,city,salary from employee_master e,emp_address_details a where 
+e.emp_id=a.emp_id and e.emp_id in(select emp_id from branch_master b,employee_master c where 
+bname="Vadgaon" and salary>10000 and b.branch_id=c.branch_id); 
+
+select e_name from employee_master e,branch_master b,emp_address_details
+a,branch_address c where e.emp_id=a.emp_id and b.branch_id=e.branch_id and 
+c.branch_id=b.branch_id and c.city=a.city;
+
+select e_name from employee_master where salary>all(select salary from employee_master 
+e,branch_master b where e.branch_id=b.branch_id and bname="Vadgaon"); 
+
+create view TotEmp as select bname,count(emp_id) as TotalEmployees from 
+employee_master e,branch_master b where e.branch_id=b.branch_id group by e.branch_id;
+select * from TotEmp;
+
+select bname from employee_master e,branch_master b where e.branch_id=b.branch_id and salary>10000;
+
+create view Emp as select bname,avg(salary),sum(salary) from employee_master 
+e,branch_master b where e.branch_id=b.branch_id group by e.branch_id;
+select * from Emp;
+
+select e_name from employee_master e,branch_master b where e.branch_id=b.branch_id and 
+e.branch_id not in(select branch_id from branch_master where bname="vadgaon");
+
+
+select column_names from table1 any_join_name table2 on table1.col_name=table2.col;
+
+
+table1(roll,name,add)
+table2(roll,year)
+
+left(roll,name,year)

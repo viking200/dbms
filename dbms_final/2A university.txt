@@ -1,0 +1,101 @@
+create table Department(dept_no int(10),dept_name varchar(10) unique,building_name varchar(10));
+create table Instructor(ins_id int(10) primary key,ins_name varchar(10) not null,dept_no int(10),salary int(10),mob_no int(10));
+create table Course(course_id int(10) primary key,title varchar(10),dept_no int(10),credits int(10));
+create table Teaches(teacher_id int(10),course_id int(10),semester int(10),year year,foreign key(teacher_id) references Instructor(ins_id),foreign key(course_id) references Course(course_id));
+alter table Department add primary key(dept_no);
+alter table Instructor add foreign key(dept_no) references Department(dept_no);
+alter table Department add column budget int(10);
+
+insert into Department values(1,"comp","a",1000);
+insert into Department values(2,"it","b",2000);
+insert into Department values(3,"cs","c",3000);
+insert into Instructor values(1,"vaishnavi",1,20000,234567890);
+insert into Instructor values(2,"harsha",2,30000,876547890);
+insert into Instructor values(3,"purva",3,30000,874567890);
+insert into Course values(1,"toc",1,7);
+insert into Course values(2,"dbms",2,9);
+insert into Course values(3,"cn",3,8);
+insert into Teaches values(1,1,5,2022);
+insert into Teaches values(2,2,6,2021);
+insert into Teaches values(3,3,4,2020);
+
+create unique index a on Instructor(mob_no);
+
+create view insview as 
+select ins_id,ins_name,dept_no,mob_no
+from Instructor;
+
+insert into Department values(4,"civil",'d',4000);
+insert into insview values(4,'laxmi',4,123456789);
+select * from Instructor; 
+
+update insview 
+set dept_no=2 
+where ins_id=4;
+select * from insview;
+
+delete from insview where ins_id=4;
+select * from insview;
+
+drop view insview;
+
+alter table Department drop column budget;
+select * from Department;
+
+alter table Course modify title varchar(12);
+desc Course;
+
+create view newview as 
+select ins_name,dept_name,salary
+from Instructor,Department
+where Instructor.dept_no=Department.dept_no;
+select * from newview;
+
+update newview
+set salary = 220000
+where ins_name = 'vaishnavi';
+select * from newview;
+select * from Instructor;
+
+alter table Instructor drop index a;
+desc Instructor;
+
+alter table Course rename Coursetable;
+select * from Coursetable;
+
+create view newview2 as select ins_name,title from Instructor,Coursetable
+where Instructor.dept_no=Coursetable.dept_no;
+select * from newview2;
+
+show create table Instructor;
+alter table Instructor drop foreign key Instructor_ibfk_1;
+alter table Department drop primary key;
+desc Instructor;
+desc Department;
+
+alter table Department add primary key(dept_no);
+
+create table Student(stud_id int auto_increment,stud_name varchar(10),dept_no int,DOB
+date,foreign key(dept_no) references Department(dept_no),primary key(stud_id));
+
+desc Student;
+insert into Student values(1,'priya',1,"2003-01-22");
+insert into Student values(2,'payal',2,"2002-03-02");
+insert into Student values(3,'pooja',3,"2001-04-12");
+select * from Student;
+
+alter table Student auto_increment=5;
+insert into Student values(10,'niya',4,'2002-03-15');
+select * from Student;
+
+select * from Teaches;
+select* from Instructor;
+select * from Department;
+
+create view computer as
+select dept_name,semester,ins_name
+from Department,Teaches,Instructor
+where Teaches.semester = 5 and Department.dept_name = 'comp'
+and Department.dept_no=Instructor.dept_no and Instructor.ins_id=Teaches.teacher_id;
+
+select * from computer;

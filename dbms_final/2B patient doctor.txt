@@ -1,0 +1,72 @@
+create table Patient(pat_id int(10) primary key,pat_name varchar(10), date_adm date,age int(10), city varchar(10));
+create table Doctor(doc_id int(10) primary key,doc_name varchar(10),qualification varchar(10),exp int(10),dept varchar(10),city varchar(10), salary int(10));
+create table Treats(doc_id int(10),pat_id int(10),disease varchar(10), foreign key(doc_id) references Doctor(doc_id) on delete cascade,foreign key(pat_id) references Patient(pat_id) on delete set null);
+
+desc Patient;
+insert into Patient values(1,'vaishnavi',"2022-02-25",17,'nanded');
+insert into Patient values(2,'harsha',"2022-01-15",18,'nagpur');
+insert into Patient values(3,'aisha',"2022-04-23",19,'pune');
+insert into Patient values(4,'laxmi',"2022-06-21",15,'thane');
+insert into Patient values(10,'shrushti',"2022-01-05",17,'gondiya');
+select * from Patient;
+
+desc Doctor;
+insert into Doctor values(1,'akshay','mbbs',4,'cardiology','nagpur',20000);
+insert into Doctor values(2,'mahesh','md',3,'dentist','nanded',50000);
+insert into Doctor values(3,'shubham','mbbs',21,'gastrology','nizambad',60000);
+insert into Doctor values(4,'balaji','ms',6,'surgery','pune',70000);
+insert into Doctor values(5,'suhas','ms',5,'surgery','thane',80000);
+select * from Doctor;
+
+desc Treats;
+insert into Treats values(1,1,'corona');
+insert into Treats values(2,2,'cancer');
+insert into Treats values(3,3,'fever');
+insert into Treats values(4,4,'maleria');
+insert into Treats values(5,10,'dengue');
+select * from Treats;
+
+select pat_name from Patient where age>18 and age<50;
+
+select * from Doctor where qualification = 'md';
+
+select * from Doctor where exp>20;
+
+select pat_name from Patient, Treats where disease = 'cancer' and Patient.pat_id = Treats.pat_id;
+
+select pat_name, doc_name from Patient,Doctor,Treats where disease = 'cancer' and Patient.pat_id = Treats.pat_id and Doctor.doc_id = Treats.doc_id;
+
+select pat_name from Patient where pat_name like "a%";
+select pat_name from Patient where pat_name like "%a";
+select pat_name from Patient where pat_name like "_____";
+
+delete from Patient where pat_id = 10;
+select * from Patient;
+select * from Treats;
+
+delete from Doctor where doc_name='suhas';
+select* from Doctor;
+select * from Treats;
+
+update Doctor set qualification = 'md' where doc_name = 'shubham';
+select * from Doctor;
+
+update Doctor set salary=case when dept='dentist' then salary+salary*(0.05) when dept = 'cardiology' then salary+salary*(0.1) else salary*1 end;
+select * from Doctor;
+
+select dept,sum(salary) from Doctor group by dept;
+
+select dept,avg(salary) from Doctor group by dept having avg(salary)>=all(select avg(salary) from Doctor group by dept);
+
+select dept,avg(salary) from Doctor where dept = 'dentist';
+
+select dept from Doctor group by dept having avg(salary)>50000;
+
+select count(doc_id) from Doctor;
+
+select distinct(count(doc_id)) from Treats;
+
+select city from Doctor union select city from Patient;
+
+select d.doc_name,p.pat_name,d.city from Doctor as d,Patient as p where d.city=p.city;
+

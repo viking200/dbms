@@ -1,0 +1,73 @@
+create table library(b_id int,title varchar(20),edition int,no_of_copies int);
+create table lib_audit(b_id int,title varchar(20),edition int,no_of_copies int,date_of_mod date,type_of_op varchar(20),username varchar(20));
+create table transaction(transaction_id int,b_id int,I_R varchar(20),no_of_copies int);
+
+insert into library values(1,'dbms',2,6);
+insert into library values(2,'toc',4,8);
+insert into library values(3,'spos',2,7);
+
+delimiter //
+create trigger t after update 
+on library 
+for each row 
+begin 
+declare 
+a varchar(10); 
+set a="updated";
+insert into lib_audit values(old.b_id,old.title,old.edition,old.no_of_copies,curdate(),a,current_user());
+end;
+//
+
+update library set title='dba' where b_id=1;
+select * from lib_audit;
+
+delimiter //
+create trigger t1 after delete 
+on library 
+for each row 
+begin 
+declare 
+b varchar(10); 
+set b="deleted";
+insert into lib_audit values(old.b_id,old.title,old.edition,old.no_of_copies,curdate(),b,current_user());
+end;
+//
+
+delete from library where b_id=3;
+select * from lib_audit;
+
+delimiter //
+create trigger t2 before insert 
+on transaction 
+for each row 
+begin 
+declare 
+no int;
+if new.I_R="I" then 
+select no_of_copies into no from library where b_id=new.b_id; 
+if new.no_of_copies > no then 
+set new.no_of_copies=no;
+end if;
+end if;
+end;
+//
+
+insert into transaction values(10,1,'I',3);
+select * from transaction;
+
+demimiter //
+create trigger t3 after insert 
+on transaction 
+for each row 
+begin 
+if new.I_R='I' then 
+update library set no_of_copies=no_of_copies-new.no_of_copies where b_id=new.b_id;
+else 
+update library set no_of_copies=no_of_copies+new.no_of_copies where b_id=new.b_id;
+end if;
+end;
+//
+
+insert into transaction values(11,2,'I',4);
+select * from library; 
+ 

@@ -1,0 +1,28 @@
+use vaishnavi
+
+db.createCollection('articles')
+
+db.articles.insert({'title':'c','content':'procedural language','author':'yashwant','age':25,'dop':new Date('2016-05-13'),'category':'it','comment':[{'name':'sandesh','remarks':'good'},{'name':'ravi','remarks':'nice'}]})
+db.articles.insert({'title':'java','content':'numpy','author':'harsha','age':21,'dop':new Date('2021-12-15'),'category':'cs','comment':[{'name':'riya','remarks':'ok'},{'name':'rahul','remarks':'bad'}]})
+db.articles.insert({'title':'dbms','content':'plsql','author':'sharma','age':24,'dop':new Date('2017-12-15'),'category':'cs','comment':[{'name':'siya','remarks':'best'},{'name':'ram','remarks':'wow'}]})
+db.articles.insert({'title':'mysql','content':'sql','author':'ram','age':17,'dop':new Date('2012-12-15'),'category':'it','comment':[{'name':'rima','remarks':'bad'},{'name':'hari','remarks':'best'}]})
+
+db.articles.findOne()
+
+db.articles.findOne({author:'sharma'})
+
+db.articles.updateMany({category:'it'}, {$set:{'category':'information technology'}})
+
+db.articles.updateOne({title:'java'}, {$set:{'comment':[{'name':'riya','remarks':'ok'},{'name':'rahul','remarks':'good'}]}}) 
+
+db.articles.updateOne({title:'c'},{$push:{'comment':[{name:'Harry',remarks:'Bad'}]}}) 
+
+db.articles.deleteMany({age:{$lt:18}})
+
+db.articles.remove({})
+
+db.articles.drop()
+
+db.articles.find({title:'java'})
+
+
